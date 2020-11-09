@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import timeit
 import copy
+import os.path
 
 # arguments: algo, seed, input ordering, input_size
 
@@ -27,6 +28,8 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
               Number of runs at each test case
     """
 
+    input_size = input_base ** input_power
+    # Create data frame for storing results
     results = pd.DataFrame(columns = ['input order', 'input size',
                                       'run number', 'sorting algorithm',
                                       'time'])
@@ -52,6 +55,7 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
             n_ar, t_ar = clock.autorange()
             t = clock.repeat(repeat=5, number=n_ar)
 
+            # Print out average time over the number of runs for each data size
             print(f"Average time(s) on {order} data of size "
                   f"{input_base}^{p}:", np.mean(t) / n_ar)
 
@@ -65,3 +69,11 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
                          'time': t[run_number] / n_ar},
                         ignore_index=True)
 
+    if save:
+        # Save pickled data frame to folder
+        directory = '../data/'
+        filename = "results_2.pkl"
+        file_path = os.path.join(directory, filename)
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+        results.to_pickle(file_path)
