@@ -55,7 +55,7 @@ def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
 
             # Print out average time over the number of runs for each data size
             print(f"Average time(s) on {order} data of size "
-                  f"{input_base}^{p}:", np.mean(t) / n_ar)
+                  f"{input_base**p}:", np.mean(t) / n_ar)
 
             for run_number in range(num_runs):
                 results = \
