@@ -52,8 +52,8 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
             n_ar, t_ar = clock.autorange()
             t = clock.repeat(repeat=5, number=n_ar)
 
-            print(f"Sorting average time on {order} \
-                  data of size {input_base}^{p}:", np.mean(t) / n_ar)
+            print(f"Average time(s) on {order} data of size "
+                  f"{input_base}^{p}:", np.mean(t) / n_ar)
 
             for run_number in range(num_runs):
                 results = \
