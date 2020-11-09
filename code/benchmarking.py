@@ -70,9 +70,9 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
                         ignore_index=True)
 
     if save:
-        # Save pickled data frame to folder
+        # Save pickled data frame to file in data directory
         directory = '../data/'
-        filename = "results_2.pkl"
+        filename = '{0}_n{1}.pkl'.format(sort_func.__name__, input_size)
         file_path = os.path.join(directory, filename)
         if not os.path.isdir(directory):
             os.mkdir(directory)
