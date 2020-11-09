@@ -4,17 +4,14 @@ import timeit
 import copy
 import os.path
 
-# arguments: algo, seed, input ordering, input_size
 
-# Input size is input_base raised by input_power
-
-def run_benchmark(sort_func, input_power, seed=None, save=True,
-                  input_base=2, num_runs=5):
+def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
+                  num_runs=5):
     """
     Run benchmark with given parameters
 
     Parameters
-    ----------
+    ----------------------------------------------------------------------
     sort_func: function
                Algorithm to used for sorting.
     input_power: int
@@ -26,19 +23,20 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
                 Raise this number to input_power to determine data size
     num_runs: int, optional
               Number of runs at each test case
+    ----------------------------------------------------------------------
     """
 
-    input_size = input_base ** input_power
+    input_size = input_base**input_power
     # Create data frame for storing results
     results = pd.DataFrame(columns = ['input order', 'input size',
                                       'run number', 'sorting algorithm',
                                       'time'])
     for order in ['sorted', 'reversed', 'random']:
-        for p in range(input_power):
+        for p in range(input_power+1):
 
             # Generate random data
             rng = np.random.default_rng(seed)
-            test_data = np.random.uniform(size=input_base**p)
+            test_data = rng.uniform(size=input_base**p)
 
             # Presorting
             if order == 'sorted':
@@ -63,9 +61,9 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
                 results = \
                     results.append(
                         {'input order': order,
-                         'input size': input_base ** input_power,
+                         'input size': input_base**p,
                          'run number': run_number + 1,
-                         'sorting algorithm': f'{sort_func}',
+                         'sorting algorithm': f'{sort_func.__name__}',
                          'time': t[run_number] / n_ar},
                         ignore_index=True)
 
@@ -77,3 +75,5 @@ def run_benchmark(sort_func, input_power, seed=None, save=True,
         if not os.path.isdir(directory):
             os.mkdir(directory)
         results.to_pickle(file_path)
+        print()
+        print(f'Saved to path: {file_path}')
