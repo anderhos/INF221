@@ -45,27 +45,34 @@ def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
             elif order == 'reversed':
                 test_data = list(reversed(sorted(test_data)))
 
-            # Timer function
-            clock = timeit.Timer(stmt='sort_func(copy(data))',
-                                 globals={'sort_func': sort_func,
-                                          'data': test_data,
-                                          'copy': copy.copy})
-            n_ar, t_ar = clock.autorange()
-            t = clock.repeat(repeat=5, number=n_ar)
+            quicksort_recurrsion_limit = sort_func == 'quick_sort' and (
+                order == 'sorted'
+                or order == 'reversed') and ((input_base==2 and input_size > 2) or (input_base==2 and input_size > 11))
+            
+            if not quicksort_recurrsion_limit:
+            
 
-            # Print out average time over the number of runs for each data size
-            print(f"Minimum time(s) on {order} data of size "
-                  f"{input_base**p}:", np.min(t) / n_ar)
+                # Timer function
+                clock = timeit.Timer(stmt='sort_func(copy(data))',
+                                     globals={'sort_func': sort_func,
+                                              'data': test_data,
+                                              'copy': copy.copy})
+                n_ar, t_ar = clock.autorange()
+                t = clock.repeat(repeat=7, number=n_ar)
 
-            for run_number in range(num_runs):
-                results = \
-                    results.append(
-                        {'input order': order,
-                         'input size': input_base**p,
-                         'run number': run_number + 1,
-                         'sorting algorithm': f'{sort_func.__name__}',
-                         'time': t[run_number] / n_ar},
-                        ignore_index=True)
+                # Print out average time over the number of runs for each data size
+                print(f"Minimum time(s) on {order} data of size "
+                      f"{input_base**p}:", np.min(t) / n_ar)
+
+                for run_number in range(num_runs):
+                    results = \
+                        results.append(
+                            {'input order': order,
+                             'input size': input_base**p,
+                             'run number': run_number + 1,
+                             'sorting algorithm': f'{sort_func.__name__}',
+                             'time': t[run_number] / n_ar},
+                            ignore_index=True)
 
     if save:
         # Save pickled data frame to file in data directory
