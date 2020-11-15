@@ -5,7 +5,11 @@ import copy
 import os.path
 
 
-def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
+def run_benchmark(sort_func,
+                  input_base,
+                  input_power,
+                  seed=None,
+                  save=True,
                   num_runs=5):
     """
     Run benchmark with given parameters
@@ -28,41 +32,46 @@ def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
 
     input_size = input_base**input_power
     # Create data frame for storing results
-    results = pd.DataFrame(columns = ['input order', 'input size',
-                                      'run number', 'sorting algorithm',
-                                      'time'])
+    results = pd.DataFrame(columns=[
+        'input order', 'input size', 'run number', 'sorting algorithm', 'time'
+    ])
     for order in ['sorted', 'reversed', 'random']:
-        for p in range(input_power+1):
+        for p in range(input_power + 1):
 
-            # Generate random data
-            rng = np.random.default_rng(seed)
-            test_data = rng.uniform(size=input_base**p)
-
-            # Presorting
-            if order == 'sorted':
-                test_data = sorted(test_data)
-
-            elif order == 'reversed':
-                test_data = list(reversed(sorted(test_data)))
-
-            quicksort_recurrsion_limit = sort_func == 'quick_sort' and (
+            quicksort_recurrsion_limit = sort_func == quick_sort and (
                 order == 'sorted'
-                or order == 'reversed') and ((input_base==2 and input_size > 2) or (input_base==2 and input_size > 11))
-            
+                or order == 'reversed') and ((input_base == 10 and p > 3) or
+                                             (input_base == 2 and p > 11))
+            print(sort_func, order, input_base, p, num_runs)
+
             if not quicksort_recurrsion_limit:
-            
+
+                # Generate random data
+                rng = np.random.default_rng(seed)
+                test_data = rng.uniform(size=input_base**p)
+
+                # Presorting
+                if order == 'sorted':
+                    test_data = sorted(test_data)
+
+                elif order == 'reversed':
+                    test_data = list(reversed(sorted(test_data)))
 
                 # Timer function
                 clock = timeit.Timer(stmt='sort_func(copy(data))',
-                                     globals={'sort_func': sort_func,
-                                              'data': test_data,
-                                              'copy': copy.copy})
+                                     globals={
+                                         'sort_func': sort_func,
+                                         'data': test_data,
+                                         'copy': copy.copy
+                                     })
                 n_ar, t_ar = clock.autorange()
                 t = clock.repeat(repeat=7, number=n_ar)
 
                 # Print out average time over the number of runs for each data size
-                print(f"Minimum time(s) on {order} data of size "
-                      f"{input_base**p}:", np.min(t) / n_ar)
+                print(
+                    f"Minimum time(s) on {order} data of size "
+                    f"{input_base**p}:",
+                    np.min(t) / n_ar)
 
                 for run_number in range(num_runs):
                     results = \
@@ -73,14 +82,13 @@ def run_benchmark(sort_func, input_base, input_power, seed=None, save=True,
                              'sorting algorithm': f'{sort_func.__name__}',
                              'time': t[run_number] / n_ar},
                             ignore_index=True)
-
-    if save:
-        # Save pickled data frame to file in data directory
-        directory = '../data/'
-        filename = '{0}_n{1}.pkl'.format(sort_func.__name__, input_size)
-        file_path = os.path.join(directory, filename)
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
-        results.to_pickle(file_path)
-        print()
-        print(f'Saved to path: {file_path}')
+        if save:
+            # Save pickled data frame to file in data directory
+            directory = '../data/'
+            filename = '{0}_n{1}^{2}.pkl'.format(sort_func.__name__, input_base, input_power)
+            file_path = os.path.join(directory, filename)
+            if not os.path.isdir(directory):
+                os.mkdir(directory)
+            results.to_pickle(file_path)
+            print()
+            print(f'Saved to path: {file_path}')
