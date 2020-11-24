@@ -55,7 +55,7 @@ def run_benchmark(sort_func,
                     test_data = sorted(test_data)
 
                 elif order == 'reversed':
-                    test_data = list(reversed(sorted(test_data)))
+                    test_data = sorted(test_data, reverse=True)
 
                 # Timer function
                 clock = timeit.Timer(stmt='sort_func(copy(data))',
