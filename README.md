@@ -1,1 +1,1 @@
-Benchmarking sorting algorithms in Python
+Project benchmarking sorting algorithms in Python
